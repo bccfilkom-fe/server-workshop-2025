@@ -9,27 +9,3 @@ export interface IApiResponse<T> {
     message: string;
   };
 }
-
-/**
- * Todo item interface
- */
-export interface ITodo {
-  id: string;
-  text: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
-/**
- * Create Todo request interface
- */
-export interface ICreateTodoRequest {
-  text: string;
-}
-
-/**
- * Update Todo request interface
- */
-export interface IUpdateTodoRequest {
-  text: string;
-}

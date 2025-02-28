@@ -8,6 +8,13 @@
       "when": 1740708691111,
       "tag": "0000_light_malice",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1740733332923,
+      "tag": "0001_dusty_makkari",
+      "breakpoints": true
     }
   ]
 }

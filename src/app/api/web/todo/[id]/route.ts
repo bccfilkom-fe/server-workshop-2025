@@ -1,9 +1,9 @@
-import { eq, param } from "drizzle-orm";
 import { handleApiError, sendError, sendSuccess } from "@/lib/api";
 import { idParamSchema, updateTodoSchema } from "@/models/todo";
 
 import { NextRequest } from "next/server";
 import { db } from "@/server/db";
+import { eq } from "drizzle-orm";
 import { todos } from "@/server/db/schema";
 
 /**

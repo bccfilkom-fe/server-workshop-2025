@@ -10,7 +10,6 @@ export function sendSuccess<T>(data?: T, status = 200): NextResponse {
   if (status === 204) {
     return new NextResponse(null, { status: 204 });
   }
-
   const response: IApiResponse<T> = {
     success: true,
     data,
@@ -25,12 +24,14 @@ export function sendError(
   message: string,
   code = "INTERNAL_SERVER_ERROR",
   status = 500,
+  details?: Record<string, any>,
 ): NextResponse {
   const response: IApiResponse<null> = {
     success: false,
     error: {
       code,
       message,
+      ...details, // This will include the fields object or any other details
     },
   };
   return NextResponse.json(response, { status });
@@ -47,16 +48,34 @@ export function handleZodError(error: ZodError): NextResponse {
 /**
  * Handle general API errors
  */
-export function handleApiError(error: unknown): NextResponse {
-  console.error("API Error:", error);
-
+export function handleApiError(error: unknown) {
+  // Handle Zod validation errors with better messages
   if (error instanceof ZodError) {
-    return handleZodError(error);
+    // Create an object to store field-specific error messages
+    const fieldErrors: Record<string, string> = {};
+
+    // Extract field paths and their error messages
+    error.errors.forEach((err) => {
+      const fieldName = err.path.join(".");
+      fieldErrors[fieldName] = err.message;
+    });
+
+    // Create a human-readable message
+    const missingFields = Object.keys(fieldErrors);
+    let message: string;
+
+    if (missingFields.length === 1) {
+      message = `Missing required field: ${missingFields[0]}`;
+    } else if (missingFields.length > 1) {
+      message = `Missing required fields: ${missingFields.join(", ")}`;
+    } else {
+      message = "Validation error";
+    }
+
+    return sendError(message, "VALIDATION_ERROR", 400, { fields: fieldErrors });
   }
 
-  if (error instanceof Error) {
-    return sendError(error.message, "INTERNAL_SERVER_ERROR", 500);
-  }
-
-  return sendError("Unknown error occurred", "INTERNAL_SERVER_ERROR", 500);
+  // Handle other types of errors as before
+  console.error("API Error:", error);
+  return sendError("Something went wrong", "SERVER_ERROR", 500);
 }

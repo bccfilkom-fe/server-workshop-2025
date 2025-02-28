@@ -6,7 +6,7 @@ export default {
   schema: "./src/server/db/schema.ts",
   dialect: "postgresql",
   dbCredentials: {
-    url: env.DATABASE_URL,
+    url: env.POSTGRES_URL,
   },
-  tablesFilter: ["server-workshop-2025_*"],
+  tablesFilter: ["workshop-2025_*"],
 } satisfies Config;

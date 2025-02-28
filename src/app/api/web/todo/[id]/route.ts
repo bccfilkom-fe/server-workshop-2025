@@ -12,10 +12,10 @@ import { todos } from "@/server/db/schema";
  */
 export async function GET(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const paramsId = params.id;
+    const paramsId = (await params).id;
     const id = idParamSchema.parse(paramsId);
 
     // Fetch the todo from database
@@ -38,13 +38,13 @@ export async function GET(
  */
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const paramsId = params.id;
+    const paramsId = (await params).id;
     const id = idParamSchema.parse(paramsId);
 
-    const body = await request.json();
+    const body: unknown = await request.json();
     const validatedData = updateTodoSchema.parse(body);
 
     // Update the todo in database
@@ -73,10 +73,10 @@ export async function PUT(
  */
 export async function DELETE(
   _request: NextRequest,
-  { params }: { params: { id: string } },
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const paramsId = params.id;
+    const paramsId = (await params).id;
     const id = idParamSchema.parse(paramsId);
 
     // Delete the todo from database
